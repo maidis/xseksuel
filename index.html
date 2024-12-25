@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>xseksüel</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+        .upload-area {
+            border: 2px dashed #ccc;
+            border-radius: 10px;
+            padding: 20px;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+        .upload-area:hover {
+            background-color: #f9f9f9;
+        }
+        .result {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+        }
+        .result img {
+            max-height: 150px;
+            margin-bottom: 20px;
+        }
+        .color-map {
+            display: block;
+            width: 100%;
+        }
+        .color-block {
+            height: 50px;
+            width: 100%;
+        }
+        footer {
+            margin-top: 40px;
+            font-size: 0.9rem;
+        }
+        footer a {
+            text-decoration: none;
+            margin: 0 10px;
+        }
+        #textInput {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>xseksüel</h1>
+    <p>Görselinizi ve kelimenizi girin, sanatınızı oluşturun!</p>
+
+    <div id="uploadArea" class="upload-area">Görseli buraya sürükleyin veya tıklayarak seçin</div>
+    <input type="file" id="imageInput" class="form-control d-none" accept="image/*">
+    <input type="text" id="textInput" class="form-control mt-3" placeholder="Kelimenizi girin">
+
+    <div id="output" class="mt-4"></div>
+
+    <footer>
+        <p>
+            <a href="https://anilozbek.blogspot.com/" target="_blank">maidis blog</a> |
+            <a href="https://x.com/anilozbek" target="_blank">@anilozbek</a> |
+            <a href="https://github.com/maidis" target="_blank">@maidis</a>
+        </p>
+    </footer>
+
+    <script>
+        const uploadArea = document.getElementById('uploadArea');
+        const imageInput = document.getElementById('imageInput');
+        const textInput = document.getElementById('textInput');
+        const output = document.getElementById('output');
+
+        let generateTimeout;
+
+        const generateArtwork = () => {
+            clearTimeout(generateTimeout);
+            generateTimeout = setTimeout(() => {
+                const textValue = textInput.value;
+                output.innerHTML = '';
+
+                if (imageInput.files.length === 0 || !textValue) {
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const image = new Image();
+                    image.src = e.target.result;
+                    image.onload = function () {
+                        const canvas = document.createElement('canvas');
+                        const ctx = canvas.getContext('2d');
+                        canvas.width = image.width;
+                        canvas.height = image.height;
+                        ctx.drawImage(image, 0, 0);
+
+                        const colorCount = {};
+                        for (let y = 0; y < canvas.height; y++) {
+                            for (let x = 0; x < canvas.width; x++) {
+                                const pixelData = ctx.getImageData(x, y, 1, 1).data;
+                                const color = `rgb(${pixelData[0]}, ${pixelData[1]}, ${pixelData[2]})`;
+                                colorCount[color] = (colorCount[color] || 0) + 1;
+                            }
+                        }
+
+                        const topColors = Object.entries(colorCount)
+                            .sort((a, b) => b[1] - a[1])
+                            .slice(0, 5)
+                            .map(entry => entry[0]);
+
+                        const colorMap = document.createElement('div');
+                        colorMap.className = 'color-map';
+
+                        topColors.forEach(color => {
+                            const block = document.createElement('div');
+                            block.className = 'color-block';
+                            block.style.backgroundColor = color;
+                            colorMap.appendChild(block);
+                        });
+
+                        const result = document.createElement('div');
+                        result.className = 'result';
+
+                        const imgElement = document.createElement('img');
+                        imgElement.src = image.src;
+
+                        const textElement = document.createElement('div');
+                        textElement.innerHTML = `<h2>${textValue.toUpperCase()}SEKSÜEL</h2>`;
+
+                        result.appendChild(imgElement);
+                        result.appendChild(colorMap);
+                        result.appendChild(textElement);
+
+                        output.appendChild(result);
+
+                        const downloadButton = document.createElement('button');
+                        downloadButton.className = 'btn btn-success mt-3';
+                        downloadButton.innerText = 'Görseli İndir';
+                        const randomColors = topColors.sort(() => 0.5 - Math.random()).slice(0, 2);
+                        downloadButton.style.backgroundColor = randomColors[0];
+                        downloadButton.addEventListener('click', () => {
+                            html2canvas(result).then(canvas => {
+                                const link = document.createElement('a');
+                                link.download = 'xseksuel.png';
+                                link.href = canvas.toDataURL();
+                                link.click();
+                            });
+                        });
+
+                        const shareButton = document.createElement('button');
+                        shareButton.className = 'btn btn-info mt-3';
+                        shareButton.innerText = "X'te Paylaş";
+                        shareButton.style.backgroundColor = randomColors[1];
+                        shareButton.addEventListener('click', () => {
+                            const url = 'https://x.com/intent/tweet?text=' + encodeURIComponent(`Sanatımı oluşturdum! ${textValue.toUpperCase()}SEKSÜEL`);
+                            window.open(url, '_blank');
+                        });
+
+                        output.appendChild(downloadButton);
+                        output.appendChild(shareButton);
+                    };
+                };
+
+                reader.readAsDataURL(imageInput.files[0]);
+            }, 500);
+        };
+
+        uploadArea.addEventListener('click', () => {
+            imageInput.click();
+        });
+
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.style.backgroundColor = '#f0f0f0';
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.style.backgroundColor = 'white';
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.style.backgroundColor = 'white';
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                imageInput.files = files;
+                generateArtwork();
+            }
+        });
+
+        imageInput.addEventListener('change', generateArtwork);
+        textInput.addEventListener('input', generateArtwork);
+    </script>
+</body>
+</html>
